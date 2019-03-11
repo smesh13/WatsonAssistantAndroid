@@ -9,17 +9,6 @@
     tools:context=".MainActivity"
     android:background="@color/colorPrimary">
 
-    <ImageButton
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="startChatting"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        tools:srcCompat="@drawable/ic_send_24dp" />
-
     <TextView
         android:id="@+id/textView"
         android:layout_width="335dp"
@@ -30,7 +19,7 @@
         android:layout_marginEnd="52dp"
         android:layout_marginRight="52dp"
         android:layout_marginBottom="310dp"
-        android:text="Clicca qui sotto per parlare con il nostro Watson"
+        android:text="@string/cliccaqui"
         android:textSize="18sp"
         android:textStyle="bold|italic"
         app:fontFamily="sans-serif-medium"
@@ -46,11 +35,25 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
         android:layout_marginBottom="272dp"
-        android:text="Benvenuto"
+        android:text="@string/benvenuto"
         android:textColor="@color/colorAccent"
         android:textSize="36sp"
         app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="68dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="139dp"
+        android:onClick="startChatting"
+        android:background="@mipmap/ic_launcher_omino"
+        android:textColor="@color/design_default_color_primary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 </android.support.constraint.ConstraintLayout>
