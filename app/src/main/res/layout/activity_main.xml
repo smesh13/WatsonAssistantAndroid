@@ -45,12 +45,12 @@
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="wrap_content"
+        android:layout_width="77dp"
         android:layout_height="68dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="139dp"
+        android:background="@mipmap/ic_launcher_foreground"
         android:onClick="startChatting"
-        android:background="@mipmap/ic_launcher_omino"
         android:textColor="@color/design_default_color_primary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
