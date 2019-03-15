@@ -19,11 +19,11 @@ import java.util.ArrayList;
 
 
 public class Main3Activity extends AppCompatActivity {
-    RecyclerView recyclerView;
-    String[] Items = {};
-    EditText mMessageEditText;
-    TextView mMessageOutput;
-    int i=0;
+    private RecyclerView recyclerView;
+    private ArrayList<String> items = new ArrayList<String>();
+    private EditText mMessageEditText;
+    private TextView mMessageOutput;
+    private RecycleViewAdapter recycleViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +35,8 @@ public class Main3Activity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recycleView1);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        recyclerView.setAdapter(new RecycleViewAdapter(this, Items));
+        recycleViewAdapter = new RecycleViewAdapter(this, items);
+        recyclerView.setAdapter(recycleViewAdapter);
         mMessageOutput = findViewById(R.id.viewMessaggio);
     }
 
@@ -45,9 +45,12 @@ public class Main3Activity extends AppCompatActivity {
       //  Intent intent = new Intent(this,Main3Activity.class);
        // intent.putExtra(Extra_Message,message);
         //adapter.notify
-        Items[i]=message;
-        i++;
-        recyclerView.setAdapter(new RecycleViewAdapter(this, Items));
+        items.add(message);
+
+        recycleViewAdapter.notifyItemInserted(items.size());
+
+        recyclerView.scrollToPosition(items.size());
+
     }
 
 //    private void initRecyclerView(){

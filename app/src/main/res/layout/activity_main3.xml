@@ -26,7 +26,8 @@
         android:layout_alignParentBottom="true"
         android:layout_gravity="end"
         android:onClick="invioMessaggio"
-        android:text="Button" />
+        android:text="Button"
+        android:layout_alignParentEnd="true" />
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
@@ -45,6 +46,7 @@
         android:layout_width="match_parent"
         android:layout_height="659dp"
         android:layout_marginBottom="8dp"
+        android:clipToPadding="true"
         app:layout_constraintBottom_toTopOf="@+id/navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
