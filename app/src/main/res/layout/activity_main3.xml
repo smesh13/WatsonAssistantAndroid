@@ -10,23 +10,29 @@
 
     <EditText
         android:id="@+id/editText"
-        android:layout_width="316dp"
+        android:layout_width="317dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:editable="true"
         android:ems="10"
-        android:hint="Inserire domanda"
+        android:hint="Inserimento"
         android:inputType="textPersonName" />
 
     <Button
         android:id="@+id/button"
-        android:layout_width="wrap_content"
+        android:layout_width="79dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_gravity="end"
+        android:layout_marginStart="9dp"
+        android:layout_marginLeft="9dp"
+        android:layout_toEndOf="@+id/editText"
+        android:layout_toRightOf="@+id/editText"
+        android:background="@drawable/ic_send_24dp"
         android:onClick="invioMessaggio"
-        android:text="Button" />
+        android:text="" />
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
@@ -45,6 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="659dp"
         android:layout_marginBottom="8dp"
+        android:clipToPadding="true"
         app:layout_constraintBottom_toTopOf="@+id/navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

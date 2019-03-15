@@ -11,12 +11,15 @@ import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 
 public class RecycleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-     Context context;
-     String[] items ;
-    public RecycleViewAdapter (Context context,String[]items){
-        this.context=context;
+    private Context context;
+    private ArrayList<String> items;
+
+    public RecycleViewAdapter(Context context, ArrayList<String> items) {
+        this.context = context;
         this.items = items;
     }
 
@@ -24,28 +27,30 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View row = inflater.inflate(R.layout.interno_recycle_view,viewGroup,false);
-        Item item = new Item(row);
-        return item;
+        View row = inflater.inflate(R.layout.interno_recycle_view, viewGroup, false);
+        return new Item(row);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-        ((Item)viewHolder).textView.setText(items[i]);
+        ((Item) viewHolder).textView.setText(items.get(i));
     }
 
     @Override
     public int getItemCount() {
-        return items.length;
+        return items.size();
     }
 
     public class Item extends RecyclerView.ViewHolder {
-        TextView textView ;
+        TextView textView;
+
         public Item(@NonNull View itemView) {
             super(itemView);
-            textView =itemView.findViewById(R.id.viewMessaggio);
+            textView = itemView.findViewById(R.id.viewMessaggio);
         }
     }
+
+
 
 
 }
