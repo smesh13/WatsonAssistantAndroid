@@ -1,6 +1,7 @@
 package com.example.def;
 
 import android.os.Bundle;
+import android.se.omapi.Session;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
@@ -48,7 +49,17 @@ public class Main3Activity extends AppCompatActivity {
         mService.getAnsware().enqueue(new Callback <Response>() {
             @Override
             public void onResponse(Call<Response> call, Response <Response> response) {
+
+
+
+
+
+
+
                 if (response.isSuccessful()){
+
+
+
                     String message2 = mMessageOutput.getText().toString();
                     items.add(message2);
                 }
