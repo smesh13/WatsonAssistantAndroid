@@ -47,8 +47,8 @@
 
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
-        android:text="Messaggio del bot "
+        android:text="Messaggio del bot"
         android:textColor="@color/colorPrimaryDark" />
-    
+
 
 </LinearLayout>

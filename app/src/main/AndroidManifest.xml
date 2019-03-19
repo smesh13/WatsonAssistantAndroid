@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 
     package="com.example.def">
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -18,6 +19,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!--<meta-data-->
+            <!--android:name="https://gateway-lon.watsonplatform.net/assistant/api"-->
+            <!--android:value="syRUmO5OizoHJM-Ur99kW923Zoz8iK6bE6I7qFyNHt2v"/>-->
+
     </application>
 
 </manifest>
