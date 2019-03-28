@@ -10,7 +10,7 @@ import retrofit2.Retrofit;
 
 public class AutenticateInterceptor implements Interceptor {
     private String credentials;
-
+//controlla che le credenziali user e password siano esatte , e ne chiede l'autenticazione
     public AutenticateInterceptor(String user, String password) {
         this.credentials = Credentials.basic(user, password);
     }
@@ -22,10 +22,5 @@ public class AutenticateInterceptor implements Interceptor {
                 .header("Authorization", credentials).build();
         return chain.proceed(authenticatedRequest);
 
-
     }
-
-
-
-
 }
