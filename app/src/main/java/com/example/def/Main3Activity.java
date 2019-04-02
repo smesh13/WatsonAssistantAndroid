@@ -3,6 +3,7 @@ package com.example.def;
 import android.content.Context;
 import android.os.Bundle;
 import android.se.omapi.Session;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
@@ -13,6 +14,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.support.v7.widget.RecyclerView;
 import com.example.def.models.RecycleViewAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -23,20 +29,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static com.example.def.RetrofitClient.retrofit;
 
 
-public class Main3Activity extends AppCompatActivity implements SoService {
-    private static String mSessionId;
+public class Main3Activity extends AppCompatActivity {
+    private String mSessionId;
     private RecyclerView recyclerView;
     private ArrayList <String> items = new ArrayList <String>();
+    private ArrayList <String> itembot = new ArrayList <String>();
     private EditText mMessageEditText;
-    public static TextView mMessageOutputCliente;
-    public static TextView mMessageOutputBot;
+    public TextView mMessageOutputCliente;
+    public TextView mMessageOutputBot;
     private RecycleViewAdapter recycleViewAdapter;
     private SoService mService;
+    private String mMessaggioBot;
+    private String mMessage1;
 
 
-//    public void setmSessionId(String mSessionId) {
-//        this.mSessionId = mSessionId;
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,15 +54,14 @@ public class Main3Activity extends AppCompatActivity implements SoService {
         recyclerView = findViewById(R.id.recycleView1);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(llm);
-        recycleViewAdapter = new RecycleViewAdapter(this, items);
+        recycleViewAdapter = new RecycleViewAdapter(this, items,itembot);
         recyclerView.setAdapter(recycleViewAdapter);
         mMessageOutputCliente = findViewById(R.id.viewMessaggio);
-        mMessageOutputBot = findViewById(R.id.viewMessaggioBot);
         loadAnswers();
     }
 
     private void loadAnswers() {
-        System.out.println(mSessionId);
+
         Call <SessionId> call = mService.getAnsware();
         call.enqueue(new Callback <SessionId>() {
             @Override
@@ -64,10 +69,12 @@ public class Main3Activity extends AppCompatActivity implements SoService {
                 if (response.isSuccessful()) {
                     System.out.println("hola");
                     mSessionId = response.body().getSessionId();
+                  //  RetrofitClient.CSESSION_ID = mSessionId;
                     System.out.println(mSessionId);
+
                 } else {
                     int statusCode = response.code();
-                    // Log.d("okkio", String.valueOf(statusCode));
+
                 }
             }
             @Override
@@ -75,38 +82,46 @@ public class Main3Activity extends AppCompatActivity implements SoService {
                 System.out.println("non funziona");
             }
         });
-        System.out.println(mSessionId);
-    }
-
-    public static String getmSessionId() {
-
-        System.out.println(mSessionId);
-        return mSessionId;
 
     }
+    private void startSecondCall() {
+        Call <Obj1> call2 = mService.getAnsware2(mSessionId,mMessage1);
+        call2.enqueue(new Callback <Obj1>() {
+            @Override
+            public void onResponse(Call <Obj1> call, Response <Obj1> response) {
+                System.out.println("messaggio arrivato");
+                mMessaggioBot = response.body().getOutput().getGeneric().get(0).getText();
+                itembot.add(mMessaggioBot);
+                mMessageOutputBot = findViewById(R.id.viewMessaggioBot);
+                mMessageOutputBot.setText(mMessaggioBot);
+                //String text = getText();
+                System.out.println(mMessaggioBot);
 
-    public void invioMessaggio(View view) {
-        String message = mMessageEditText.getText().toString();
-        recycleViewAdapter.notifyItemInserted(items.size());
+            }
+
+            @Override
+            public void onFailure(Call <Obj1> call, Throwable t) {
+                System.out.println("errore 404Ema");
+            }
+        });
+    }
+
+
+    public void invioMessaggio (View view){
+
+        mMessage1= mMessageEditText.getText().toString();
+        //recycleViewAdapter.notifyItemInserted(items.size());
+        //recycleViewAdapter.notifyItemInserted(itembot.size());
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(findViewById(R.id.button).getWindowToken(), 0);
         mMessageEditText.setText("");
-        recyclerView.scrollToPosition(items.size() - 1);
-        if (message.length() == 0) {
+        recyclerView.scrollToPosition(items.size()-1);
+        if (mMessage1.length() == 0) {
             Log.d("yessa", "non stampo");
         } else {
-            items.add(message);
+            items.add(mMessage1);
         }
+        startSecondCall();
     }
 
-
-    @Override
-    public Call <SessionId> getAnsware() {
-        return null;
     }
-
-    @Override
-    public Call <MessageOutputBot> getAnsware2() {
-        return null;
-    }
-}

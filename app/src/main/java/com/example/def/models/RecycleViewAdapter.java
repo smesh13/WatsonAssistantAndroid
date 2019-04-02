@@ -10,9 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.TextView;
-
 import com.example.def.R;
-
 import java.util.ArrayList;
 
 
@@ -20,9 +18,13 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private Context context;
     private ArrayList<String> items;
 
-    public RecycleViewAdapter(Context context, ArrayList<String> items) {
+
+
+    public RecycleViewAdapter(Context context, ArrayList<String> items,ArrayList<String> itembot) {
         this.context = context;
         this.items = items;
+
+
     }
 
     @NonNull
@@ -36,6 +38,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         ((Item) viewHolder).textView.setText(items.get(i));
+
     }
 
     @Override
@@ -45,10 +48,12 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public class Item extends RecyclerView.ViewHolder {
         TextView textView;
+        TextView textBot;
 
         public Item(@NonNull View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.viewMessaggio);
+            textBot = itemView.findViewById(R.id.viewMessaggioBot);
         }
     }
 }
