@@ -2,28 +2,31 @@ package com.example.def;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.se.omapi.Session;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.support.v7.widget.RecyclerView;
+
+import com.example.def.application.App;
 import com.example.def.models.RecycleViewAdapter;
+import com.example.def.retrofit.ApiService;
+import com.example.def.retrofit.Authorization;
+import com.example.def.retrofit.AuthorizationInterceptor;
+import com.example.def.retrofit.MessageResponse;
+import com.example.def.retrofit.Session;
+
 import java.util.ArrayList;
-import okhttp3.ResponseBody;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import static com.example.def.RetrofitClient.retrofit;
 
 
-public class Main3Activity extends AppCompatActivity implements SoService {
+public class Main3Activity extends AppCompatActivity {
     private static String mSessionId;
     private RecyclerView recyclerView;
     private ArrayList <String> items = new ArrayList <String>();
@@ -31,7 +34,7 @@ public class Main3Activity extends AppCompatActivity implements SoService {
     public static TextView mMessageOutputCliente;
     public static TextView mMessageOutputBot;
     private RecycleViewAdapter recycleViewAdapter;
-    private SoService mService;
+    private ApiService mService;
 
 
 //    public void setmSessionId(String mSessionId) {
@@ -43,7 +46,7 @@ public class Main3Activity extends AppCompatActivity implements SoService {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
         mMessageEditText = findViewById(R.id.editText);
-        mService = ApiUtils.getSoService();
+        mService = ((App)getApplication()).getApiService(); //ApiUtils.getSoService();
         mMessageOutputBot = findViewById(R.id.viewMessaggioBot);
         recyclerView = findViewById(R.id.recycleView1);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -55,12 +58,17 @@ public class Main3Activity extends AppCompatActivity implements SoService {
         loadAnswers();
     }
 
+    public static final String VERSION = "2019-02-28";
+
     private void loadAnswers() {
         System.out.println(mSessionId);
-        Call <SessionId> call = mService.getAnsware();
-        call.enqueue(new Callback <SessionId>() {
+//        Call <SessionId> call = mService.getAnsware();
+        Session sess = ((App)getApplication()).getSession();
+        Call <Authorization> call =
+        mService.createSession(AuthorizationInterceptor.getAuthorizationHeader(sess.getUserId(),sess.getPassword()),VERSION);
+        call.enqueue(new Callback <Authorization>() {
             @Override
-            public void onResponse(Call <SessionId> call, Response <SessionId> response) {
+            public void onResponse(Call <Authorization> call, Response <Authorization> response) {
                 if (response.isSuccessful()) {
                     System.out.println("hola");
                     mSessionId = response.body().getSessionId();
@@ -71,7 +79,7 @@ public class Main3Activity extends AppCompatActivity implements SoService {
                 }
             }
             @Override
-            public void onFailure(Call <SessionId> callresponse, Throwable t) {
+            public void onFailure(Call <Authorization> callresponse, Throwable t) {
                 System.out.println("non funziona");
             }
         });
@@ -100,13 +108,13 @@ public class Main3Activity extends AppCompatActivity implements SoService {
     }
 
 
-    @Override
-    public Call <SessionId> getAnsware() {
-        return null;
-    }
-
-    @Override
-    public Call <MessageOutputBot> getAnsware2() {
-        return null;
-    }
+//    @Override
+//    public Call <SessionId> getAnsware() {
+//        return null;
+//    }
+//
+//    @Override
+//    public Call <MessageOutputBot> getAnsware2() {
+//        return null;
+//    }
 }

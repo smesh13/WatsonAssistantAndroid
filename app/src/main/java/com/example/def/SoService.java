@@ -19,8 +19,8 @@ public interface SoService {
     Call<SessionId> getAnsware();
 
 
-    @POST(SERVICE_PATH2 +  + "/message?" + VERSION)
-    Call<MessageOutputBot> getAnsware2();
+//    @POST(SERVICE_PATH2+"/message?"+VERSION)
+//    Call<MessageOutputBot> getAnsware2();
 
     /*/v2/assistants/1880bf85-0bcd-4b77-917d-ddb4f3ed8df0/sessions?version=2018-11-08*/
 }
