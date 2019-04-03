@@ -13,7 +13,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.POST;
 
 import static com.example.def.Main3Activity.getmSessionId;
-import static com.example.def.Main3Activity.mMessageOutputCliente;
 
 public class RetrofitClient {
     public static final String BASE_URL = "https://gateway-lon.watsonplatform.net/assistant/api";

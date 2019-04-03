@@ -14,28 +14,17 @@ import okhttp3.Response;
 
 public class AuthorizationInterceptor implements Interceptor {
     public static final String VERSION = "2019-02-28";
-    private App theApp;
+    private static App theApp;
     private Session session;
 
-    public AuthorizationInterceptor(App apiService, Session session) {
-        this.theApp = apiService;
+    public AuthorizationInterceptor(App app, Session session) {
+        theApp = app;
         this.session = session;
     }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        Headers chainheaders = chain.request().headers();
-        Request.Builder chainbuilder = chain.request().newBuilder();//.header("Authorization", session.getToken()).
-//                            method(mainRequest.method(), mainRequest.body());
-        String authKey = getAuthorizationHeader(session.getUserId(), session.getPassword());
-        for(String name:chainheaders.names()){
-            String value = chainheaders.get(name);
-            chainbuilder.header(name,value);
-        }
-        chainbuilder.header("Authorization",authKey);
-//        chainbuilder.url(chain.request().url().url().toString()+"/"+session.getToken());
-        chainbuilder.method(chain.request().method(), chain.request().body());
-        Request mainRequest = chainbuilder.build();
+        Request mainRequest = chain.request();
         Response mainResponse = chain.proceed(mainRequest);
 
         if (session.isLoggedIn()) {
@@ -44,7 +33,7 @@ public class AuthorizationInterceptor implements Interceptor {
 //                String authKey = getAuthorizationHeader(session.getUserId(), session.getPassword());
                 // request to login API to get fresh token
                 // synchronously calling login API
-                retrofit2.Response<Authorization> createSessionResponse = theApp.getApiService().createSession(authKey,VERSION).execute();
+                retrofit2.Response<Authorization> createSessionResponse = theApp.getApiService().createSession(getAuthorizationHeader(),VERSION).execute();
 
                 if (createSessionResponse.isSuccessful()) {
                     // login request succeed, new token generated
@@ -81,7 +70,9 @@ public class AuthorizationInterceptor implements Interceptor {
      * this method is API implemetation specific
      * might not work with other APIs
      **/
-    public static String getAuthorizationHeader(String userId, String password) {
+    public static String getAuthorizationHeader() {
+        String userId = theApp.getSession().getUserId();
+        String password = theApp.getSession().getPassword();
         String credential = userId + ":" + password;
         String auth = "Basic " + Base64.encodeToString(credential.getBytes(), Base64.DEFAULT);
         int length = auth.length();
