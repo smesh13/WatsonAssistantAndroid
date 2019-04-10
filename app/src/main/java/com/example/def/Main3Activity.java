@@ -2,126 +2,160 @@ package com.example.def;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.se.omapi.Session;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.support.v7.widget.RecyclerView;
-import com.example.def.models.RecycleViewAdapter;
+import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.example.def.application.App;
+import com.example.def.entity.MessageRequest;
+import com.example.def.models.RecycleViewAdapter;
+import com.example.def.retrofit.ApiService;
+import com.example.def.retrofit.Authorization;
+import com.example.def.retrofit.AuthorizationInterceptor;
+import com.example.def.entity.MessageResponse;
+import com.example.def.retrofit.Session;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import okhttp3.ResponseBody;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import static com.example.def.RetrofitClient.retrofit;
 
 
 public class Main3Activity extends AppCompatActivity {
-    private String mSessionId;
+    private static String mSessionId;
     private RecyclerView recyclerView;
-    private ArrayList <String> items = new ArrayList <String>();
-    private ArrayList <String> itembot = new ArrayList <String>();
+    private ArrayList <String> questions = new ArrayList <String>();
+    private ArrayList <String> answers = new ArrayList <String>();
     private EditText mMessageEditText;
-    public TextView mMessageOutputCliente;
-    public TextView mMessageOutputBot;
     private RecycleViewAdapter recycleViewAdapter;
-    private SoService mService;
-    private String mMessaggioBot;
-    private String mMessage1;
-
-
+    private ApiService mService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
         mMessageEditText = findViewById(R.id.editText);
-        mService = ApiUtils.getSoService();
-        mMessageOutputBot = findViewById(R.id.viewMessaggioBot);
+        mService = ((App) getApplication()).getApiService();
         recyclerView = findViewById(R.id.recycleView1);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(llm);
-        recycleViewAdapter = new RecycleViewAdapter(this, items,itembot);
+        recycleViewAdapter = new RecycleViewAdapter(this, questions, answers);
         recyclerView.setAdapter(recycleViewAdapter);
-        mMessageOutputCliente = findViewById(R.id.viewMessaggio);
         loadAnswers();
     }
 
+    public static final String VERSION = "2019-02-28";
+
     private void loadAnswers() {
 
-        Call <SessionId> call = mService.getAnsware();
-        call.enqueue(new Callback <SessionId>() {
+        Session sess = ((App) getApplication()).getSession();
+        Call <Authorization> call =
+                mService.createSession(AuthorizationInterceptor.getAuthorizationHeader(), VERSION);
+        call.enqueue(new Callback <Authorization>() {
             @Override
-            public void onResponse(Call <SessionId> call, Response <SessionId> response) {
+            public void onResponse(Call <Authorization> call, Response <Authorization> response) {
                 if (response.isSuccessful()) {
-                    System.out.println("hola");
                     mSessionId = response.body().getSessionId();
-                  //  RetrofitClient.CSESSION_ID = mSessionId;
-                    System.out.println(mSessionId);
-
+                    // Toast.makeText(Main3Activity.this, "got session_id: "+mSessionId, Toast.LENGTH_LONG).show();
+                    Session sess = ((App) getApplication()).getSession();
+                    sess.saveToken(mSessionId);
                 } else {
                     int statusCode = response.code();
-
                 }
             }
+
             @Override
-            public void onFailure(Call <SessionId> callresponse, Throwable t) {
-                System.out.println("non funziona");
+            public void onFailure(Call <Authorization> callresponse, Throwable t) {
+                Toast.makeText(Main3Activity.this, "doesn't work", Toast.LENGTH_LONG).show();
             }
         });
-
-    }
-    private void startSecondCall() {
-        Call <Obj1> call2 = mService.getAnsware2(mSessionId,mMessage1);
-        call2.enqueue(new Callback <Obj1>() {
-            @Override
-            public void onResponse(Call <Obj1> call, Response <Obj1> response) {
-                System.out.println("messaggio arrivato");
-                mMessaggioBot = response.body().getOutput().getGeneric().get(0).getText();
-                itembot.add(mMessaggioBot);
-                mMessageOutputBot = findViewById(R.id.viewMessaggioBot);
-                mMessageOutputBot.setText(mMessaggioBot);
-                //String text = getText();
-                System.out.println(mMessaggioBot);
-
-            }
-
-            @Override
-            public void onFailure(Call <Obj1> call, Throwable t) {
-                System.out.println("errore 404Ema");
-            }
-        });
+        System.out.println(mSessionId);
     }
 
+    public static String getmSessionId() {
 
-    public void invioMessaggio (View view){
+        System.out.println(mSessionId);
+        return mSessionId;
 
-        mMessage1= mMessageEditText.getText().toString();
-        //recycleViewAdapter.notifyItemInserted(items.size());
-        //recycleViewAdapter.notifyItemInserted(itembot.size());
+    }
+
+    public void invioMessaggio(View view) {
+        String message = mMessageEditText.getText().toString();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(findViewById(R.id.button).getWindowToken(), 0);
         mMessageEditText.setText("");
-        recyclerView.scrollToPosition(items.size()-1);
-        if (mMessage1.length() == 0) {
+        if (message.length() == 0) {
             Log.d("yessa", "non stampo");
+            Toast.makeText(Main3Activity.this ,"Attenzione: messaggio vuoto",Toast.LENGTH_LONG).show();
         } else {
-            items.add(mMessage1);
+            sendMessage(message);
         }
-        startSecondCall();
     }
 
+    private void sendMessage(final String message) {
+        /*
+{
+  "input": {
+    "message_type": "text",
+    "text": "<<message>>",
+    "options": {
+      "alternate_intents": true,
+      "debug": true
     }
+  },
+  "context": {
+    "global": {
+      "system": {
+        "user_id": "my_user_id"
+      }
+    }
+  }
+}
+         */
+        Session sess = ((App) getApplication()).getSession();
+        String json = "{ \"input\": { \"message_type\": \"text\", \"text\": \"" + message + "\", \"options\": { \"alternate_intents\": true, \"debug\": true } }, \"context\": { \"global\": { \"system\": { \"user_id\": \"my_user_id\" } } } }";
+        Gson gson = new Gson();
+        MessageRequest question = gson.fromJson(json, MessageRequest.class);
+
+        Call <MessageResponse> call = mService.sendMessage(AuthorizationInterceptor.getAuthorizationHeader(), sess.getToken(), VERSION, question);
+        //mService.createSession(AuthorizationInterceptor.getAuthorizationHeader(sess.getUserId(),sess.getPassword()),VERSION);
+        call.enqueue(new Callback <MessageResponse>() {
+            @Override
+            public void onResponse(Call <MessageResponse> call, Response <MessageResponse> response) {
+                if (response.isSuccessful()) {
+                    MessageResponse resp = response.body();
+                    String text = resp.getOutput().getGeneric()[0].getText();
+                   // Toast.makeText(Main3Activity.this, text, Toast.LENGTH_LONG).show();
+                    answers.add(text);
+                    questions.add(message);
+
+                } else {
+                    int statusCode = response.code();
+                    Toast.makeText(Main3Activity.this, "response code: " + statusCode + "\n" + response.message(), Toast.LENGTH_LONG).show();
+                    answers.add(response.message());
+                    questions.add(message);
+
+                }
+                recycleViewAdapter.notifyItemInserted(questions.size());
+                recyclerView.scrollToPosition(questions.size() - 1);
+            }
+
+            @Override
+            public void onFailure(Call <MessageResponse> callresponse, Throwable t) {
+                Toast.makeText(Main3Activity.this, "doesn't work", Toast.LENGTH_LONG).show();
+                answers.add("doesn't work");
+                questions.add(message);
+
+                recycleViewAdapter.notifyItemInserted(questions.size());
+                recyclerView.scrollToPosition(questions.size() - 1);
+            }
+        });
+    }
+}
